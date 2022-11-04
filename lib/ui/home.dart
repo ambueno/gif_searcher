@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
@@ -20,15 +21,16 @@ class _HomePageState extends State<HomePage> {
   // https://api.giphy.com/v1/gifs/search?api_key=ig4Tq7SFdZRrHpOlwqYfjxdEwx2tmPhO&q=&limit=25&offset=0&rating=g&lang=en
 
   String _search = "";
-  int _offset = 25;
+  int _offset = 0;
 
-  _getGifs() async {
+  Future <Map> _getGifs() async {
     http.Response response;
     if (_search == "") {
       response = await http.get(Uri.parse("https://api.giphy.com/v1/gifs/trending?api_key=ig4Tq7SFdZRrHpOlwqYfjxdEwx2tmPhO&limit=25&rating=g"));
     } else {
       response = await http.get(Uri.parse("https://api.giphy.com/v1/gifs/search?api_key=ig4Tq7SFdZRrHpOlwqYfjxdEwx2tmPhO&q=$_search&limit=25&offset=$_offset&rating=g&lang=en"));
     }
+    return json.decode(response.body);
   }
 
   @override
@@ -45,16 +47,21 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.black54,
         body: Column(
           children: <Widget>[
-            const Padding(
+             Padding(
                 padding: EdgeInsets.all(10.0),
                 child: TextField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Pesquise aqui",
                     labelStyle: TextStyle(color: Colors.white, fontSize: 20.0),
                     border: OutlineInputBorder(),
                   ),
-                  style: TextStyle(color: Colors.white, fontSize: 20.0),
+                  style: const TextStyle(color: Colors.white, fontSize: 20.0),
                   textAlign: TextAlign.center,
+                  onSubmitted: (text){
+                    setState(() {
+                      _search = text;
+                    });
+                  },
                 ),
             ),
             Expanded(child: FutureBuilder(
@@ -89,6 +96,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
+    int getCount(List data) {
+      return _search == null ? data.length : data.length + 1;
+    }
+
     return GridView.builder(
         padding: const EdgeInsets.all(10.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -96,7 +107,7 @@ class _HomePageState extends State<HomePage> {
             crossAxisSpacing : 10.0,
             mainAxisSpacing: 10.0
         ),
-        itemCount: 4,
+        itemCount: getCount(snapshot.data["data"]),
         itemBuilder : (context, index){
           if(index < snapshot.data["data"].length){
             return GestureDetector(
