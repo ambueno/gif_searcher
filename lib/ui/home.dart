@@ -1,7 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
@@ -76,13 +73,19 @@ class _HomePageState extends State<HomePage> {
                             strokeWidth: 5.0)
                     );
                   default:
-                    return (snapshot.hasError) ? Container() : _createGifTable(context, snapshot);
+                    if(snapshot.hasError) {
+                      return Container();
+                    } else {
+                      return _createGifTable(context, snapshot);
+                    }
                 }
               },
             ))
           ],
+
         )
     );
+
   }
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
@@ -95,13 +98,16 @@ class _HomePageState extends State<HomePage> {
         ),
         itemCount: 4,
         itemBuilder : (context, index){
-          return GestureDetector(
-            child : Image.network(
-              snapshot.data["data"][index]["images"]["fixed_height"]["url"],
-              height: 300.0,
-              fit: BoxFit.cover,
-            ),
-          );
+          if(index < snapshot.data["data"].length){
+            return GestureDetector(
+              child : Image.network(
+                snapshot.data["data"][index]["images"]["fixed_height"]["url"],
+                fit: BoxFit.cover,
+              ),
+            );
+          } else {
+            return Container();
+          }
         }
     );
   }
