@@ -28,6 +28,6 @@ class GifPage extends StatelessWidget {
 
   Future<void> share() async {
     await FlutterShare.share(
-        title: 'GIF', linkUrl: (_gifData["images"]["fixed_height"]["url"]));
+        title: (_gifData["title"]), linkUrl: (_gifData["images"]["fixed_height"]["url"]));
   }
 }
