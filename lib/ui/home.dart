@@ -109,11 +109,12 @@ class _HomePageState extends State<HomePage> {
           if (_search == null || index < snapshot.data["data"].length) {
             return GestureDetector(
               child: FadeInImage.memoryNetwork(
-                  placeholder : kTransparentImage,
-                  image: snapshot.data["data"][ index ][ "images"]["fixed_height" ][ "url" ],
-                  height : 300.0,
-                  fit : BoxFit.cover,
-                  ),
+                placeholder: kTransparentImage,
+                image: snapshot.data["data"][index]["images"]["fixed_height"]
+                    ["url"],
+                height: 300.0,
+                fit: BoxFit.cover,
+              ),
               onTap: () {
                 Navigator.push(
                     context,
